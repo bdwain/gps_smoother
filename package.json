@@ -1,0 +1,8 @@
+{
+   "name": "GPS_Smoother",
+   "version": "1.0.0",
+   "dependencies" : {
+      "libxmljs": "0.8.1"
+   }
+
+}
