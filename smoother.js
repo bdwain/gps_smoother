@@ -1,5 +1,3 @@
-
-
 function smoothe(tcxFile, response){
   console.log("smoothe was called.");
 

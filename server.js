@@ -1,20 +1,17 @@
 var http = require("http");
+var smoothe = require("./smoother").smoothe;
 
-function start(smoothe) {
-  function onRequest(request, response) {
-    var postData = "";
-    request.setEncoding("utf8");
-    request.addListener("data", function(postDataChunk) {
-      postData += postDataChunk;
-    });
+function onRequest(request, response) {
+  var postData = "";
+  request.setEncoding("utf8");
+  request.addListener("data", function(postDataChunk) {
+    postData += postDataChunk;
+  });
 
-    request.addListener("end", function() {
-      smoothe(postData, response);
-    });
-  }
-
-  http.createServer(onRequest).listen(8888);
-  console.log("Server has started.");
+  request.addListener("end", function() {
+    smoothe(postData, response);
+  });
 }
 
-exports.start = start;
+http.createServer(onRequest).listen(8888);
+console.log("Server has started.");
