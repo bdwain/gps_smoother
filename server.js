@@ -1,16 +1,53 @@
 var http = require("http");
+var multiparty = require("multiparty");
+var fs = require("fs");
+var parseXml = require("xml2js").parseString;
 var smoothe = require("./smoother").smoothe;
 
-function onRequest(request, response) {
-  var postData = "";
-  request.setEncoding("utf8");
-  request.addListener("data", function(postDataChunk) {
-    postData += postDataChunk;
-  });
+function filesArrayProperlyFormed(files)
+{
+  return files != null && files["tcx_file"] != null 
+  && files["tcx_file"].length == 1 && files["tcx_file"][0].path != null;
+}
 
-  request.addListener("end", function() {
-    smoothe(postData, response);
-  });
+function onRequest(request, response) {
+  var parsed = false;
+  if(request.method == "POST")
+  {
+    var form = new multiparty.Form({uploadDir: "/tmp/tcx_files"});
+    form.parse(request, function(err, fields, files)
+    {
+      if(err != null || !filesArrayProperlyFormed(files))
+        return;
+
+      fs.readFile(files["tcx_file"][0].path, 'utf8', function(err, data)
+      {
+        fs.unlink(files["tcx_file"][0].path);
+        if(err)
+        {
+          response.writeHead(500, {"Content-Type": "text/plain"});
+          response.write("something went wrong parsing the file: " + err);
+          response.end();
+        }
+
+        parseXml(data, function (err, result)
+        {
+          if(err)
+            return;
+          
+          parsed = true;
+          smoothe(result, response);
+        });
+      });
+    });
+  }
+  
+  if(parsed)
+  {
+    response.writeHead(400, {"Content-Type": "text/plain"});
+    response.write("you didn't send a file or something went wrong");
+    response.end();
+  }
 }
 
 http.createServer(onRequest).listen(8888);

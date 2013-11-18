@@ -1,9 +1,9 @@
 function smoothe(tcxFile, response){
-  console.log("smoothe was called.");
-
-
+  var activities = tcxFile["TrainingCenterDatabase"]["Activities"];
+  
+  
   response.writeHead(200, {"Content-Type": "text/plain"});
-  response.write(querystring.parse(postData).text);
+  response.write(JSON.stringify(activities));
   response.end();
 }
 
