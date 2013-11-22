@@ -1,8 +1,8 @@
 var http = require("http");
 var multiparty = require("multiparty");
 var fs = require("fs");
-var parseXml = require("xml2js").parseString;
 var smoothe = require("./smoother").smoothe;
+var xml2js = require("xml2js");
 
 function filesArrayProperlyFormed(files)
 {
@@ -37,7 +37,7 @@ function onRequest(request, response) {
           sendNegativeResponse(response);
           return
         }
-        parseXml(data, function (err, result)
+        xml2js.parseString(data, function (err, result)
         {
           if(err)
           {
@@ -45,7 +45,20 @@ function onRequest(request, response) {
             return;
           }
           
-          smoothe(result, response);
+          var smoothedData = smoothe(result, response);
+          if(smoothedData != null)
+          { 
+            var xmlBuilder = new xml2js.Builder();
+            var xml = xmlBuilder.buildObject(smoothedData);
+            response.writeHead(200, {
+              "Content-Type": "text/xml",
+              "Content-Disposition" : "attachment; filename=smoothed_gps.tcx"
+            });
+            response.write(xml);
+            response.end();
+          }
+          else
+            sendNegativeResponse(response);
         });
       });
     });

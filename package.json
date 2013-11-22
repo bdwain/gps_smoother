@@ -2,7 +2,7 @@
    "name": "GPS_Smoother",
    "version": "1.0.0",
    "dependencies" : {
-      "xml2js": "0.2.8",
+      "xml2js": "git://github.com/Leonidas-from-XIV/node-xml2js.git",
       "multiparty" : "3.1.0"
    }
 
