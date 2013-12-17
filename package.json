@@ -3,7 +3,7 @@
    "version": "1.0.0",
    "dependencies" : {
       "xml2js": "git://github.com/Leonidas-from-XIV/node-xml2js.git",
-      "multiparty" : "3.1.0"
+      "multiparty" : "git://github.com/superjoe30/node-multiparty.git"
    }
 
 }
